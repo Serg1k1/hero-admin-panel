@@ -1,8 +1,3 @@
-// import { useState, useEffect } from "react";
-// import { addHero } from "../../actions";
-// import { v4 as uuidv4 } from 'uuid';
-// import { useDispatch } from 'react-redux';
-// import { useHttp } from '../../hooks/http.hook';
 // Задача для этого компонента:
 // Реализовать создание нового героя с введенными данными. Он должен попадать
 // в общее состояние и отображаться в списке + фильтроваться
@@ -18,26 +13,24 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import store from '../../store';
-import { selectAll } from '../heroesFilters/filtersSlice';
 
-import { heroCreated } from '../heroesList/heroesSlice';
+import { selectAll } from '../heroesFilters/filtersSlice';
+import { useCreateHeroMutation } from '../../api/apiSlice';
+
 
 const HeroesAddForm = () => {
-    // Состояния для контроля формы
+
     const [heroName, setHeroName] = useState('');
     const [heroDescr, setHeroDescr] = useState('');
     const [heroElement, setHeroElement] = useState('');
 
+    const [createHero, { isLoading }] = useCreateHeroMutation();
+
     const { filtersLoadingStatus } = useSelector(state => state.filters);
     const filters = selectAll(store.getState());
-    const dispatch = useDispatch();
-    const { request } = useHttp();
 
     const onSubmitHandler = (e) => {
         e.preventDefault();
-        // Можно сделать и одинаковые названия состояний,
-        // хотел показать вам чуть нагляднее
-        // Генерация id через библиотеку
         const newHero = {
             id: uuidv4(),
             name: heroName,
@@ -45,30 +38,22 @@ const HeroesAddForm = () => {
             element: heroElement
         }
 
-        // Отправляем данные на сервер в формате JSON
-        // ТОЛЬКО если запрос успешен - отправляем персонажа в store
-        request("http://localhost:3001/heroes", "POST", JSON.stringify(newHero))
-            .then(res => console.log(res, 'Отправка успешна'))
-            .then(dispatch(heroCreated(newHero)))
-            .catch(err => console.log(err));
+        createHero(newHero).unwrap();
 
-        // Очищаем форму после отправки
         setHeroName('');
         setHeroDescr('');
         setHeroElement('');
     }
 
     const renderFilters = (filters, status) => {
-        if (status === "loading") {
+        if (status === 'loading') {
             return <option>Загрузка элементов</option>
-        } else if (status === "error") {
+        } else if (status === 'error') {
             return <option>Ошибка загрузки</option>
         }
 
-        // Если фильтры есть, то рендерим их
         if (filters && filters.length > 0) {
             return filters.map(({ name, label }) => {
-                // Один из фильтров нам тут не нужен
                 // eslint-disable-next-line
                 if (name === 'all') return;
 
@@ -125,101 +110,3 @@ const HeroesAddForm = () => {
 }
 
 export default HeroesAddForm;
-
-
-// const HeroesAddForm = () => {
-//     const [name, setName] = useState('');
-//     const [description, setDescription] = useState('');
-//     const [element, onElement] = useState('');
-//     const [options, setOptions] = useState([]);
-
-//     const dispatch = useDispatch();
-//     const { request } = useHttp();
-
-//     useEffect(() => {
-//         request('http://localhost:3001/filters')
-//             .then(res => setOptions(res))
-//             .catch((err) => console.log(err));
-
-//         // eslint-disable-next-line
-//     }, [])
-
-//     const onSubmit = (e) => {
-//         e.preventDefault();
-//         const id = uuidv4();
-//         const data = {
-//             id,
-//             name,
-//             description,
-//             element
-//         }
-
-//         request('http://localhost:3001/heroes', 'POST', JSON.stringify(data))
-//             .then(data => dispatch(addHero(data)))
-//             .catch(err => console.log(err))
-
-//         setName('');
-//         setDescription('');
-//         onElement('');
-//     }
-
-//     const renderOptions = (arr) => {
-//         const sliceOptions = arr.slice(1);
-//         const items = sliceOptions.map((item, i) => {
-//             return (
-//                 <option key={i} value={item.value}>{item.label}</option>
-//             )
-//         })
-//         return items;
-//     }
-
-//     const newItems = renderOptions(options);
-
-//     return (
-//         <form onSubmit={(e) => onSubmit(e)} className="border p-4 shadow-lg rounded">
-//             <div className="mb-3">
-//                 <label htmlFor="name" className="form-label fs-4">Имя нового героя</label>
-//                 <input
-//                     required
-//                     type="text"
-//                     name="name"
-//                     className="form-control"
-//                     id="name"
-//                     onChange={(e) => setName(e.target.value)}
-//                     value={name}
-//                     placeholder="Как меня зовут?" />
-//             </div>
-
-//             <div className="mb-3">
-//                 <label htmlFor="text" className="form-label fs-4">Описание</label>
-//                 <textarea
-//                     required
-//                     name="text"
-//                     className="form-control"
-//                     id="text"
-//                     onChange={(e) => setDescription(e.target.value)}
-//                     value={description}
-//                     placeholder="Что я умею?"
-//                     style={{ "height": '130px' }} />
-//             </div>
-
-//             <div className="mb-3">
-//                 <label htmlFor="element" className="form-label">Выбрать элемент героя</label>
-//                 <select
-//                     required
-//                     className="form-select"
-//                     id="element"
-//                     onChange={(e) => onElement(e.target.value)}
-//                     value={element}
-//                     name="element">
-//                     <option >Я владею элементом...</option>
-//                     {newItems}
-//                 </select>
-//             </div>
-
-//             <button type="submit" className="btn btn-primary">Создать</button>
-//         </form>
-//     )
-// }
-
-// export default HeroesAddForm;
