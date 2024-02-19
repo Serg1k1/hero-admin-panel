@@ -16,7 +16,7 @@ export const fetchHeroes = createAsyncThunk(
     'heroes/fetchHeroes',
     async () => {
         const { request } = useHttp();
-        return await request("https://hero-admin-panel1-0c2e8496bbcb.herokuapp.com/api");
+        return await request("https://hero-admin-panel1-0c2e8496bbcb.herokuapp.com/api/heroes");
     }
 );
 
