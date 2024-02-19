@@ -20,6 +20,9 @@
     "sass": "^1.43.2",
     "uuid": "^8.3.2"
   },
+  "engines": {
+    "node": "16.x"
+  },
   "scripts": {
     "start": "concurrently \"react-scripts start\" \"npx json-server heroes.json --port 3001\"",
     "build": "react-scripts build",
