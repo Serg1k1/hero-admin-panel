@@ -1,1 +1,1 @@
-# Link to see the app here - https://hero-admin-panel1-0c2e8496bbcb.herokuapp.com/
+# Link to see the app here - https://serg1k1.github.io/hero-admin-panel/
