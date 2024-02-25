@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export const apiSlice = createApi({
     reducerPath: 'api',
-    baseQuery: fetchBaseQuery({ baseUrl: 'https://hero-admin-panel1-0c2e8496bbcb.herokuapp.com/api' }),
+    baseQuery: fetchBaseQuery({ baseUrl: 'https://festive-crystalline-twister.glitch.me/' }),
     tagTypes: ['Heroes'],
     endpoints: builder => ({
         getHeroes: builder.query({
